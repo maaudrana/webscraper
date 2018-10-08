@@ -1,0 +1,20 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+
+url = "https://coingecko.com/en"
+page = requests.get(url)
+soup = BeautifulSoup(page.content,"html.parser")
+
+#Instead of assigning variable and looping you can use list comprehension.
+names = [div.a.span.text for div in soup.find_all("div",attrs={"class":"coin-content center"})]
+signs = [sign.span.text for sign in soup.find_all("div",attrs={"class":"coin-icon mr-2 center flex-column"})]
+values = [value.a.span.text for value in soup.find_all("td",attrs={"class":"td-price price text-right "})]
+caps = [cap.div.span.text for cap in soup.find_all("td",attrs={"class":"td-market_cap cap "})]
+liquidities = [liquidity.a.span.text for liquidity in soup.find_all("td", attrs={"class": "td-liquidity_score lit text-right "})]
+
+with open('list.csv', mode='w',newline='') as coins:
+    writer = csv.writer(coins, delimiter=',', quotechar='"')
+    #Take only first 100 coins
+    for i in range(100):
+        writer.writerow([names[i],signs[i],values[i],caps[i],liquidities[i]])
