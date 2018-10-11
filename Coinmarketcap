@@ -1,0 +1,20 @@
+import requests
+import csv
+from bs4 import BeautifulSoup
+url = "https://coinmarketcap.com"
+page = requests.get(url)
+html = page.content
+soup =BeautifulSoup(html,"html.parser")
+Name = [name.text for name in soup.find_all("a",attrs={"class":"currency-name-container link-secondary"})]
+Coinmarketcap= [marketcap.string.strip() for marketcap in soup.find_all("td",attrs={"class":"no-wrap market-cap text-right"})]
+Value = [price.string for price in soup.find_all("a",attrs={"class":"price"})]
+Volume = [volume.string for volume in soup.find_all("a",attrs={"class":"volume"})]
+coinsupply = [Supply.span.span.string for Supply in  soup.find_all("td",attrs={"class":"no-wrap text-right circulating-supply"})]
+
+with open('coinlist.csv', mode='w',newline='') as coins:
+    writer = csv.writer(coins, delimiter=',', quotechar='"')
+    #Take only first 100 coins
+    for i in range(100):
+        writer.writerow([Name[i],Coinmarketcap[i],Value[i],Volume[i],coinsupply[i]])
+
+print("all is ok chack csv file now")
