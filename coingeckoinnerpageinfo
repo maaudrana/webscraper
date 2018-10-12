@@ -1,0 +1,16 @@
+from bs4 import BeautifulSoup
+import requests
+import csv
+url = "https://coingecko.com/en"
+base_url = "https://coingecko.com"
+page = requests.get(url)
+soup = BeautifulSoup(page.content,"html.parser")
+names = [div.a.span.text for div in soup.find_all("div",attrs={"class":"coin-content center"})]
+Link = [base_url+div.a["href"] for div in soup.find_all("div",attrs={"class":"coin-content center"})]
+for link in Link:
+    inner_page = requests.get(link)
+    inner_soup = BeautifulSoup(inner_page.content,"html.parser")
+    indent = inner_soup.find("div",attrs={"class":"py-2"})
+    content = indent.div.next_siblings
+    Allcontent = [sibling for sibling in content if sibling.string is not None]
+    print(Allcontent)
