@@ -1,0 +1,16 @@
+import scrapy
+class MasudSpider(scrapy.Spider):
+	name = 'Masud'
+	allowed_domains = ['coingecko.com/en']
+	start_urls = ['https://coingecko.com/en']
+
+	def parse(self,response):
+		#yield{'name':name,'sign':sign,'price':price}
+		information = response.xpath('//tr')
+		for info in information:
+			name = info.xpath('.//td[3]/div/div[2]/a/span/span[1]/text()').extract_first()
+			sign = info.xpath('.//td[3]/div/div[2]/a/span/span[2]/text()').extract_first()
+			price = info.xpath('.//td[4]/div/a/span/text()').extract_first()
+			yield{'name':name,
+			'sign':sign,
+			'price':price}
